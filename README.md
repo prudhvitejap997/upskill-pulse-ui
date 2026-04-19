@@ -215,6 +215,93 @@ Contributions welcome! Please open an issue first to discuss major changes.
 
 ---
 
+## Privacy
+
+We take your privacy seriously. Upskill Pulse is built on a **privacy-first** architecture — most data never leaves your machine.
+
+### What data is collected
+
+| Data | Where it's stored | Who can see it |
+|---|---|---|
+| Your name | Browser `localStorage` only | You |
+| Quiz sessions (score, time, answers) | Browser `localStorage` only | You |
+| Theme preference (dark / light) | Browser `localStorage` only | You |
+| Uploaded PDF / TXT files | **In-memory only** — parsed for the duration of one request, then discarded. Never written to disk on the server. | Temporarily processed by Groq API |
+| Question text sent to AI | Groq API (for quiz generation) | Groq's servers (see [Groq Privacy Policy](https://groq.com/privacy-policy/)) |
+
+### What we do NOT do
+
+- We **do not** create user accounts or require sign-up.
+- We **do not** run analytics, tracking pixels, or third-party cookies.
+- We **do not** log or store your uploaded files on the server — they are parsed in memory and discarded immediately after the quiz is generated.
+- We **do not** sell or share any data with advertisers.
+- We **do not** send your personal information to any service other than Groq (for AI generation).
+
+### Third-party services
+
+- **Groq API** — When Groq mode is enabled, the content of your uploaded files and topic text is sent to Groq's servers to generate quiz questions. Groq processes this data per their [Terms of Service](https://groq.com/terms-of-use/) and [Privacy Policy](https://groq.com/privacy-policy/). Per Groq's policy, API data is **not used for model training** on their free tier.
+- **jsPDF (CDN)** — Loaded from `cdnjs.cloudflare.com` to generate your PDF report client-side. No data is sent to Cloudflare beyond the standard CDN request.
+
+### Clearing your data
+
+To clear all locally stored data (sessions, name, theme), open your browser DevTools → **Application** tab → **Local Storage** → delete keys prefixed with `upskill_`. Alternatively, use your browser's "Clear site data" option.
+
+### Offline mode = zero external requests
+
+If you run the app without a `GROQ_API_KEY`, the server falls back to the built-in question bank (`question_bank.py`). In this mode, **no data ever leaves your machine** — not even to Groq.
+
+### Data retention
+
+- Uploaded files: **not retained** (in-memory only, dropped after each request).
+- Session history: stored in your browser indefinitely until you clear it. Last 200 sessions kept per browser.
+- Server logs: standard Flask request logs (IP, path, status) only — no request body.
+
+### GDPR / CCPA
+
+Because we don't collect personal data server-side, no data-subject rights request is needed. If you deploy this project commercially, you are responsible for adding your own privacy notice and compliance controls.
+
+---
+
 ## License
 
-MIT © 2026 Prudhvi Teja P.
+**MIT License** © 2026 Prudhvi Teja P.
+
+```
+Copyright (c) 2026 Prudhvi Teja P.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### Third-party licenses
+
+This project bundles and depends on the following open-source components:
+
+| Library | License | Purpose |
+|---|---|---|
+| Flask | BSD-3-Clause | Web framework |
+| pypdf | BSD-3-Clause | PDF text extraction |
+| requests | Apache 2.0 | HTTP client (Groq API calls) |
+| gunicorn | MIT | Production WSGI server |
+| jsPDF | MIT | Client-side PDF generation |
+
+### Commercial use
+
+You are free to use, modify, and deploy Upskill Pulse commercially under the MIT License. If you distribute a modified version, please include this license notice and credit the original project.
+
+For commercial licensing of the **Pro** or **Enterprise** tiers (with support, custom question banks, SSO, LMS integration, etc.), contact `licensing@upskillpulse.io` *(demo)*.
