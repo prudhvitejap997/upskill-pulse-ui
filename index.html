@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>QuizCraft — AI Quiz Generator</title>
+<title>Upskill Pulse — AI Skills Assessment</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* =============================================
    RESET & VARIABLES
@@ -90,6 +91,11 @@ input{font-family:inherit}
   background:var(--green2);
   box-shadow:0 0 6px var(--green2);
 }
+.nav-user-name{
+  font-size:.85rem;font-weight:700;
+  color:var(--accent3);
+  display:none;
+}
 
 /* =============================================
    SCREENS
@@ -99,6 +105,85 @@ input{font-family:inherit}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
 .page{max-width:900px;margin:0 auto;padding:2.5rem 1.2rem}
+
+/* =============================================
+   SCREEN 0 — NAME ENTRY
+============================================= */
+.name-screen-wrap{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  min-height:calc(100vh - 58px);
+  padding:2rem;
+}
+.name-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius2);
+  padding:3rem 2.5rem;
+  max-width:480px;width:100%;
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+.name-card .app-logo-big{
+  width:64px;height:64px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+  margin:0 auto 1.4rem;
+}
+.name-card h1{
+  font-size:1.9rem;font-weight:800;letter-spacing:-.5px;
+  margin-bottom:.5rem;line-height:1.2;
+}
+.name-card h1 span{
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.name-card p{color:var(--text2);font-size:.95rem;margin-bottom:2rem;line-height:1.6}
+.name-input-wrap{margin-bottom:1.2rem}
+.name-input-wrap input{
+  width:100%;
+  background:var(--surface2);
+  border:1.5px solid var(--border2);
+  border-radius:var(--radius);
+  padding:1rem 1.2rem;
+  color:var(--text);
+  font-size:1.1rem;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  text-align:center;
+}
+.name-input-wrap input::placeholder{color:var(--text3)}
+.name-input-wrap input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(99,102,241,.15);
+}
+.name-input-wrap input.err{border-color:var(--red2)}
+.btn-start{
+  width:100%;padding:1rem;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  border:none;border-radius:var(--radius);
+  color:#fff;font-size:1rem;font-weight:700;
+  letter-spacing:.2px;
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
+  transition:all .2s;
+  box-shadow:0 6px 24px rgba(99,102,241,.35);
+}
+.btn-start:hover{
+  opacity:.92;transform:translateY(-1px);
+  box-shadow:0 10px 32px rgba(99,102,241,.45);
+}
+.btn-start:active{transform:translateY(0)}
+.name-features{
+  display:flex;justify-content:center;gap:1.5rem;
+  margin-top:1.8rem;flex-wrap:wrap;
+}
+.nf-item{
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.78rem;color:var(--text3);
+}
 
 /* =============================================
    SCREEN 1 — SETUP
@@ -719,6 +804,16 @@ input{font-family:inherit}
 .rev-lbl{color:var(--text3);min-width:95px;font-weight:500}
 .ans-c{color:var(--green2);font-weight:600}
 .ans-w{color:var(--red2);font-weight:600;text-decoration:line-through;opacity:.75}
+.time-tag{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.18rem .55rem;border-radius:99px;
+  font-size:.75rem;font-weight:600;
+}
+.tt-fast-ok{background:rgba(52,211,153,.12);color:var(--green2);border:1px solid rgba(52,211,153,.25)}
+.tt-fast-bad{background:rgba(245,158,11,.12);color:var(--yellow2);border:1px solid rgba(245,158,11,.25)}
+.tt-slow-ok{background:rgba(99,102,241,.12);color:var(--accent3);border:1px solid rgba(99,102,241,.25)}
+.tt-slow-bad{background:rgba(239,68,68,.12);color:var(--red2);border:1px solid rgba(239,68,68,.25)}
+.tt-normal{background:rgba(148,163,184,.1);color:var(--text2);border:1px solid rgba(148,163,184,.15)}
 
 /* Result actions */
 .res-actions{
@@ -743,6 +838,12 @@ input{font-family:inherit}
   box-shadow:0 4px 20px rgba(99,102,241,.3);
 }
 .btn-act.primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-act.pdf{
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#fff;
+  box-shadow:0 4px 20px rgba(16,185,129,.25);
+}
+.btn-act.pdf:hover{opacity:.9;transform:translateY(-1px)}
 
 /* =============================================
    RESPONSIVE
@@ -750,12 +851,13 @@ input{font-family:inherit}
 @media(max-width:700px){
   .setup-grid{grid-template-columns:1fr}
   .quiz-layout{grid-template-columns:1fr}
-  .sidebar{display:none} /* palette collapses on mobile */
+  .sidebar{display:none}
   .results-grid{grid-template-columns:1fr}
   .score-hero{flex-direction:column;align-items:flex-start;gap:1.2rem}
   .diff-sub{display:none}
   .navbar{padding:0 1rem}
   .page{padding:1.2rem .8rem}
+  .name-card{padding:2rem 1.4rem}
 }
 </style>
 </head>
@@ -765,41 +867,65 @@ input{font-family:inherit}
 <nav class="navbar">
   <a class="nav-logo" href="#">
     <div class="bolt">⚡</div>
-    <span class="name">QuizCraft</span>
+    <span class="name">Upskill Pulse</span>
   </a>
   <div class="nav-right">
     <div class="nav-dot"></div>
-    AI-Powered Quiz Generator
+    <span class="nav-user-name" id="navUserName"></span>
+    <span id="navTagline">AI Skills Assessment</span>
   </div>
 </nav>
 
 <!-- ═══════════════════════════════════════
+     SCREEN 0 — NAME ENTRY
+═══════════════════════════════════════ -->
+<div id="s-name" class="screen active">
+  <div class="name-screen-wrap">
+    <div class="name-card">
+      <div class="app-logo-big">⚡</div>
+      <h1>Welcome to <span>Upskill Pulse</span></h1>
+      <p>AI-powered technical skills assessment for developers. Upload your material, get precision questions, and track your performance.</p>
+      <div class="name-input-wrap">
+        <input id="nameInput" type="text" placeholder="Enter your name to get started…" autocomplete="off" maxlength="40"/>
+      </div>
+      <button class="btn-start" id="getStartedBtn">Get Started →</button>
+      <div class="name-features">
+        <div class="nf-item">📄 File upload</div>
+        <div class="nf-item">⏱ Time tracking</div>
+        <div class="nf-item">📊 PDF report</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
      SCREEN 1 — SETUP
 ═══════════════════════════════════════ -->
-<div id="s-setup" class="screen active">
+<div id="s-setup" class="screen">
 <div class="page">
 
   <div class="hero">
-    <div class="hero-badge">✦ Powered by AI</div>
-    <h1>Generate a <span>Smart Quiz</span><br>From Your Material</h1>
-    <p>Upload your study files, pick a difficulty, and let AI craft personalised questions for you.</p>
+    <div class="hero-badge">✦ Powered by Claude AI</div>
+    <h1>Generate a <span>Technical Quiz</span><br>From Your Material</h1>
+    <p>Upload your study files, pick a difficulty, and get precision developer questions tailored to your material.</p>
   </div>
 
   <div class="setup-grid">
 
-    <!-- Topic -->
+    <!-- Topics -->
     <div class="card setup-full">
-      <div class="card-label"><div class="ico">🎯</div> What topic do you want to be quizzed on?</div>
-      <input id="topicInput" type="text" class="topic-input"
-        placeholder="e.g. Neural Networks, French Revolution, DNA Replication…"
-        autocomplete="off"/>
+      <div class="card-label"><div class="ico">🎯</div> Topics to be quizzed on <span style="margin-left:auto;font-size:.72rem;font-weight:400;color:var(--text3)">At least 1 required</span></div>
+      <div style="display:flex;flex-direction:column;gap:.65rem;">
+        <input id="topic1" type="text" class="topic-input" placeholder="Topic 1 — e.g. Python decorators" autocomplete="off"/>
+        <input id="topic2" type="text" class="topic-input" placeholder="Topic 2 — e.g. Async / await  (optional)" autocomplete="off"/>
+      </div>
     </div>
 
     <!-- File Upload -->
     <div class="card setup-full">
       <div class="card-label">
         <div class="ico">📂</div> Upload Study Material
-        <span style="margin-left:auto;font-size:.72rem;font-weight:400;color:var(--text3)">Max 5 files · PDF or TXT</span>
+        <span style="margin-left:auto;font-size:.72rem;font-weight:400;color:var(--text3)">Max 2 files · PDF or TXT</span>
       </div>
       <div class="dropzone" id="dropzone">
         <input type="file" id="fileInput" accept=".pdf,.txt" multiple/>
@@ -820,7 +946,7 @@ input{font-family:inherit}
           <div class="diff-card easy">
             <div class="diff-em">🌱</div>
             <div class="diff-name">Easy</div>
-            <div class="diff-sub">Basic recall &amp; definitions</div>
+            <div class="diff-sub">API usage &amp; basic syntax</div>
           </div>
         </label>
         <label>
@@ -828,7 +954,7 @@ input{font-family:inherit}
           <div class="diff-card medium">
             <div class="diff-em">🔥</div>
             <div class="diff-name">Medium</div>
-            <div class="diff-sub">Application &amp; analysis</div>
+            <div class="diff-sub">Edge cases &amp; error conditions</div>
           </div>
         </label>
         <label>
@@ -836,7 +962,7 @@ input{font-family:inherit}
           <div class="diff-card hard">
             <div class="diff-em">💀</div>
             <div class="diff-name">Hard</div>
-            <div class="diff-sub">Deep reasoning &amp; edge cases</div>
+            <div class="diff-sub">Corner cases a senior dev might get wrong</div>
           </div>
         </label>
       </div>
@@ -864,7 +990,7 @@ input{font-family:inherit}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
         </svg>
-        Generate My Quiz
+        Generate My Assessment
       </button>
     </div>
 
@@ -880,13 +1006,13 @@ input{font-family:inherit}
   <div class="spinner-ring">
     <div class="spin-icon">⚡</div>
   </div>
-  <div class="loading-title">Crafting your quiz…</div>
+  <div class="loading-title">Generating your assessment…</div>
   <div class="loading-sub" id="loadSub">Reading your files</div>
   <div class="load-steps">
     <div class="ls" id="ls0"><div class="ls-dot"></div>📄 Reading &amp; parsing files</div>
     <div class="ls" id="ls1"><div class="ls-dot"></div>🧠 Analyzing topics &amp; content</div>
-    <div class="ls" id="ls2"><div class="ls-dot"></div>✍️ Generating questions</div>
-    <div class="ls" id="ls3"><div class="ls-dot"></div>✅ Finalising your quiz</div>
+    <div class="ls" id="ls2"><div class="ls-dot"></div>✍️ Generating technical questions</div>
+    <div class="ls" id="ls3"><div class="ls-dot"></div>✅ Finalising your assessment</div>
   </div>
 </div>
 </div>
@@ -1006,18 +1132,19 @@ input{font-family:inherit}
   <div class="feedback-card">
     <div class="sec-head"><div class="sec-head-ico">⏱</div> Time Taken</div>
     <div style="font-size:2rem;font-weight:800;color:var(--accent2)" id="timeTaken">—</div>
-    <div style="font-size:.8rem;color:var(--text3);margin-top:.2rem">Total quiz duration</div>
+    <div style="font-size:.8rem;color:var(--text3);margin-top:.2rem">Total assessment duration</div>
   </div>
 
   <!-- Answer Review -->
   <div class="review-card results-full">
-    <div class="sec-head"><div class="sec-head-ico">🔍</div> Answer Review</div>
+    <div class="sec-head"><div class="sec-head-ico">🔍</div> Answer Review &amp; Time Analysis</div>
     <div class="review-list" id="reviewList"></div>
   </div>
 
   <!-- Actions -->
   <div class="results-full res-actions">
     <button class="btn-act secondary" id="retakeBtn">🔄 &nbsp;Retake Same Quiz</button>
+    <button class="btn-act pdf" id="pdfBtn">📄 &nbsp;Download PDF Report</button>
     <button class="btn-act primary" id="newQuizBtn">✨ &nbsp;Start New Quiz</button>
   </div>
 
@@ -1031,9 +1158,10 @@ input{font-family:inherit}
 <script>
 /* ─── State ─────────────────────────── */
 const S = {
-  files:[],topic:'',diff:'medium',qCount:10,
+  files:[],topics:[],diff:'medium',qCount:10,
   questions:[],answers:{},cur:0,
   timerSec:0,timerHandle:null,
+  userName:'',timePerQ:{},qStartTime:0,
 };
 
 /* ─── Helpers ───────────────────────── */
@@ -1054,12 +1182,30 @@ function fmtTime(sec){
 }
 
 /* ═══════════════════════════════════════
+   NAME SCREEN
+═══════════════════════════════════════ */
+$('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('getStartedBtn').click()});
+$('getStartedBtn').addEventListener('click',()=>{
+  const name=$('nameInput').value.trim();
+  if(!name){
+    $('nameInput').classList.add('err');
+    $('nameInput').focus();
+    setTimeout(()=>$('nameInput').classList.remove('err'),1500);
+    return;
+  }
+  S.userName=name;
+  $('navUserName').textContent='👤 '+name;
+  $('navUserName').style.display='inline';
+  $('navTagline').style.display='none';
+  showScreen('s-setup');
+});
+
+/* ═══════════════════════════════════════
    SETUP SCREEN
 ═══════════════════════════════════════ */
 
 /* File upload */
 const dz=$('dropzone'), fi=$('fileInput');
-
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
 dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');addFiles([...e.dataTransfer.files])});
@@ -1070,15 +1216,13 @@ function addFiles(list){
   for(const f of list){
     const ext=f.name.slice(f.name.lastIndexOf('.')).toLowerCase();
     if(!['.pdf','.txt'].includes(ext)){showErr(`"${f.name}" must be PDF or TXT.`);continue}
-    if(S.files.length>=5){showErr('Maximum 5 files allowed.');break}
+    if(S.files.length>=2){showErr('Maximum 2 files allowed.');break}
     if(S.files.find(x=>x.name===f.name)) continue;
     S.files.push(f);
   }
   renderFiles();
 }
-
 function showErr(msg){const e=$('errMsg');e.textContent=msg;e.classList.add('show')}
-
 function renderFiles(){
   const c=$('fileChips'); c.innerHTML='';
   S.files.forEach((f,i)=>{
@@ -1094,9 +1238,7 @@ function renderFiles(){
       <div class="fc-bar" style="position:absolute;bottom:0;left:0;right:0"></div>
     `;
     div.style.position='relative';
-    div.querySelector('.fc-del').addEventListener('click',()=>{
-      S.files.splice(i,1);renderFiles();
-    });
+    div.querySelector('.fc-del').addEventListener('click',()=>{S.files.splice(i,1);renderFiles()});
     c.appendChild(div);
   });
 }
@@ -1113,13 +1255,17 @@ $('incBtn').addEventListener('click',()=>{
 
 /* Generate */
 $('generateBtn').addEventListener('click',async()=>{
-  const topic=$('topicInput').value.trim();
-  if(!topic){$('topicInput').focus();$('topicInput').style.borderColor='var(--red2)';return}
-  $('topicInput').style.borderColor='';
-  S.topic=topic;
+  const t1=$('topic1').value.trim();
+  const t2=$('topic2').value.trim();
+  const topics=[t1,t2].filter(Boolean);
+  if(!topics.length){
+    $('topic1').focus();$('topic1').style.borderColor='var(--red2)';return;
+  }
+  $('topic1').style.borderColor='';
+  S.topics=topics;
   S.diff=document.querySelector('input[name="diff"]:checked').value;
   S.qCount=parseInt($('qCount').value);
-  S.answers={};S.cur=0;
+  S.answers={};S.cur=0;S.timePerQ={};S.qStartTime=0;
   showScreen('s-loading');
   await runLoader();
   await fetchQuiz();
@@ -1128,8 +1274,7 @@ $('generateBtn').addEventListener('click',async()=>{
 /* ═══════════════════════════════════════
    LOADING SCREEN
 ═══════════════════════════════════════ */
-const loadMsgs=['Reading your files…','Analysing topics & content…','Generating questions…','Finalising your quiz…'];
-
+const loadMsgs=['Reading your files…','Analysing topics & content…','Generating technical questions…','Finalising your assessment…'];
 async function runLoader(){
   for(let i=0;i<4;i++){
     $('loadSub').textContent=loadMsgs[i];
@@ -1137,29 +1282,22 @@ async function runLoader(){
     await wait(i<3?700:300);
   }
 }
-
-/* ─── [API] Replace mock with real backend call ─── */
 async function fetchQuiz(){
   try{
-    /*
-      const fd=new FormData();
-      fd.append('topic',S.topic);
-      fd.append('difficulty',S.diff);
-      fd.append('count',S.qCount);
-      S.files.forEach(f=>fd.append('files',f));
-      const res=await fetch('/api/generate-quiz',{method:'POST',body:fd});
-      const data=await res.json();
-      S.questions=data.questions;
-    */
-    await wait(500);
-    S.questions=mockQuestions(S.topic,S.diff,S.qCount);
-
-    // mark done
+    const fd=new FormData();
+    fd.append('topic',S.topics.join(' | '));
+    fd.append('difficulty',S.diff);
+    fd.append('questionCount',S.qCount);
+    S.files.forEach(f=>fd.append('files',f));
+    const res=await fetch('/api/generate-quiz',{method:'POST',body:fd});
+    if(!res.ok) throw new Error('Server error: '+res.status);
+    const data=await res.json();
+    S.questions=data.questions;
     for(let i=0;i<4;i++){$(`ls${i}`).classList.remove('active');$(`ls${i}`).classList.add('done')}
     await wait(350);
     launchQuiz();
   }catch(e){
-    $('loadSub').textContent='Error generating quiz. Please try again.';
+    $('loadSub').textContent='Error: '+e.message+' — check the server terminal for details.';
     console.error(e);
   }
 }
@@ -1170,18 +1308,29 @@ async function fetchQuiz(){
 function launchQuiz(){
   showScreen('s-quiz');
   buildPalette();
+  S.qStartTime=0;
   renderQ(0);
   startTimer();
 }
 
 function renderQ(idx){
+  /* Save time for the question we're leaving */
+  if(S.qStartTime>0 && idx!==S.cur){
+    const elapsed=Math.round((Date.now()-S.qStartTime)/1000);
+    S.timePerQ[S.cur]=(S.timePerQ[S.cur]||0)+elapsed;
+    S.qStartTime=Date.now();
+  } else if(S.qStartTime===0){
+    S.qStartTime=Date.now();
+  }
+  /* If same question (pick), don't reset qStartTime */
+
   S.cur=idx;
   const q=S.questions[idx],tot=S.questions.length;
   const labels=['A','B','C','D'];
 
   $('qTag').textContent=`Question ${idx+1} of ${tot}`;
   $('qText').textContent=q.question;
-  $('qTopicBadge').textContent=S.topic;
+  $('qTopicBadge').textContent=S.topics.length>1?S.topics.join(' · '):S.topics[0];
   const db=$('qDiffBadge');
   db.textContent={easy:'🌱 Easy',medium:'🔥 Medium',hard:'💀 Hard'}[S.diff];
   db.className=`badge badge-${S.diff}`;
@@ -1214,6 +1363,12 @@ $('nextBtn').addEventListener('click',()=>{
 $('submitQuizBtn').addEventListener('click',confirmSubmit);
 
 function confirmSubmit(){
+  /* Save time for the current question */
+  if(S.qStartTime>0){
+    const elapsed=Math.round((Date.now()-S.qStartTime)/1000);
+    S.timePerQ[S.cur]=(S.timePerQ[S.cur]||0)+elapsed;
+    S.qStartTime=0;
+  }
   const skipped=S.questions.length-Object.keys(S.answers).length;
   if(skipped>0&&!confirm(`${skipped} question${skipped>1?'s':''} unanswered. Submit anyway?`))return;
   stopTimer();
@@ -1283,11 +1438,11 @@ function showResults(){
   $('statS').textContent=skipped;
   $('timeTaken').textContent=fmtTime(S.timerSec);
 
-  /* Grade */
+  /* Grade with name personalization */
   const g=grade(pct);
   $('gradeEm').textContent=g.em;
   $('gradeTitle').textContent=g.title;
-  $('gradeMsg').textContent=g.msg;
+  $('gradeMsg').textContent=(S.userName?S.userName+', ':'')+g.msg;
   $('gradeBanner').style.borderColor=color;
 
   /* Weak topics */
@@ -1302,6 +1457,10 @@ function showResults(){
     });
   }
 
+  /* Per-question time analysis */
+  const totalTracked=Object.values(S.timePerQ).reduce((a,b)=>a+b,0);
+  const avgTime=totalTracked>0?totalTracked/tot:S.timerSec/tot||1;
+
   /* Review */
   const rl=$('reviewList'); rl.innerHTML='';
   const labels=['A','B','C','D'];
@@ -1310,6 +1469,23 @@ function showResults(){
     const skip=a===undefined,ok=!skip&&a===q.correct;
     const st=skip?'s':ok?'c':'w';
     const icon=skip?'—':ok?'✓':'✗';
+    const qTime=S.timePerQ[i]||0;
+
+    /* Time feedback */
+    let timeCls='tt-normal',timeTxt='';
+    if(qTime>0){
+      if(qTime<avgTime*0.5&&ok){timeCls='tt-fast-ok';timeTxt='⚡ Quick & accurate!'}
+      else if(qTime<avgTime*0.5&&!ok&&!skip){timeCls='tt-fast-bad';timeTxt='⚠ Rushed — spend more time'}
+      else if(qTime>avgTime*2&&ok){timeCls='tt-slow-ok';timeTxt='🤔 Careful thought — correct!'}
+      else if(qTime>avgTime*2&&!ok&&!skip){timeCls='tt-slow-bad';timeTxt='📖 Needs deeper study'}
+      else if(ok){timeCls='tt-normal';timeTxt='✓ Good pace'}
+      else if(skip){timeCls='tt-normal';timeTxt='— Skipped'}
+      else{timeCls='tt-normal';timeTxt='✗ Review this topic'}
+    }
+
+    const timeDisplay=qTime>0?`${qTime}s`:'—';
+    const timeTagHtml=timeTxt?`<span class="time-tag ${timeCls}">${timeTxt}</span>`:'';
+
     const div=document.createElement('div');
     div.className='rev-item';
     div.innerHTML=`
@@ -1327,6 +1503,10 @@ function showResults(){
           <div class="rev-lbl">Correct:</div>
           <div class="ans-c">${labels[q.correct]}. ${q.options[q.correct]}</div>
         </div>`:''}
+        <div class="rev-row">
+          <div class="rev-lbl">Time spent:</div>
+          <div style="display:flex;align-items:center;gap:.5rem">${timeDisplay} &nbsp;${timeTagHtml}</div>
+        </div>
       </div>`;
     div.querySelector('.rev-header').addEventListener('click',()=>div.classList.toggle('open'));
     rl.appendChild(div);
@@ -1334,68 +1514,236 @@ function showResults(){
 }
 
 function grade(p){
-  if(p>=90)return{em:'🏆',title:'Outstanding!',msg:'Perfect execution. You know this inside out.'};
-  if(p>=75)return{em:'🎯',title:'Great Job!',msg:'Strong performance with only minor gaps to address.'};
-  if(p>=60)return{em:'👍',title:'Good Effort!',msg:'Solid foundation — review the highlighted topics to level up.'};
-  if(p>=40)return{em:'📖',title:'Keep Going!',msg:'Good start. Spend more time on the topics flagged below.'};
-  return    {em:'💪',title:"Don't Give Up!",msg:'Revisit your study material and retake the quiz.'};
+  if(p>=90)return{em:'🏆',title:'Outstanding!',msg:'perfect execution. You know this inside out.'};
+  if(p>=75)return{em:'🎯',title:'Great Job!',msg:'strong performance with only minor gaps to address.'};
+  if(p>=60)return{em:'👍',title:'Good Effort!',msg:'solid foundation — review the highlighted topics to level up.'};
+  if(p>=40)return{em:'📖',title:'Keep Going!',msg:'good start. Spend more time on the topics flagged below.'};
+  return    {em:'💪',title:"Don't Give Up!",msg:'revisit your study material and retake the quiz.'};
 }
 
-$('retakeBtn').addEventListener('click',()=>{S.answers={};S.cur=0;launchQuiz()});
+$('retakeBtn').addEventListener('click',()=>{
+  S.answers={};S.cur=0;S.timePerQ={};S.qStartTime=0;
+  launchQuiz();
+});
 $('newQuizBtn').addEventListener('click',()=>{
-  S.files=[];S.questions=[];S.answers={};S.cur=0;stopTimer();
+  S.files=[];S.topics=[];S.questions=[];S.answers={};S.cur=0;
+  S.timePerQ={};S.qStartTime=0;
+  stopTimer();
   renderFiles();
-  $('topicInput').value='';
+  $('topic1').value='';$('topic2').value='';
   $('qCount').value=10;$('stepVal').textContent=10;$('cntDisplay').textContent=10;
   ['ls0','ls1','ls2','ls3'].forEach(id=>{$(id).classList.remove('active','done')});
   showScreen('s-setup');
 });
 
 /* ═══════════════════════════════════════
-   MOCK QUESTION DATA
-   [API] Remove once backend is connected
+   PDF REPORT
 ═══════════════════════════════════════ */
-function mockQuestions(topic,diff,count){
-  const subs=[
-    `${topic} — Fundamentals`,
-    `${topic} — Core Concepts`,
-    `${topic} — Advanced Topics`,
-    `${topic} — Applications`,
-    `${topic} — History & Context`,
-  ];
-  const bank={
-    easy:[
-      {q:`What is the primary goal of {t}?`,opts:['To simplify complex systems','To increase manual effort','To reduce automation','To create confusion'],c:0},
-      {q:`Which term best describes {t}?`,opts:['A systematic approach','A random process','An outdated method','A temporary solution'],c:0},
-      {q:`{t} is most commonly used in which field?`,opts:['Technology and science','Agriculture exclusively','Ancient history','Cooking'],c:0},
-      {q:`What is a key benefit of {t}?`,opts:['Improved efficiency','Increased cost','Slower processing','More manual work'],c:0},
-      {q:`Who primarily benefits from studying {t}?`,opts:['Students and professionals','Only historians','Only engineers','No one'],c:0},
-    ],
-    medium:[
-      {q:`How does {t} address scalability challenges?`,opts:['Through modular design','By reducing features','By ignoring scale','By using older methods'],c:0},
-      {q:`What distinguishes {t} from conventional approaches?`,opts:['Automation and intelligence','Higher cost','Slower output','Less accuracy'],c:0},
-      {q:`In {t}, what role does feedback play?`,opts:['Critical for iteration','Irrelevant to the process','Only used at the start','Slows down output'],c:0},
-      {q:`Which methodology aligns best with modern {t} practices?`,opts:['Agile and iterative','Waterfall exclusively','Big bang approach','No methodology'],c:0},
-      {q:`What is a common bottleneck when implementing {t}?`,opts:['Data quality and availability','Excess of resources','Too many experts','Over-documentation'],c:0},
-    ],
-    hard:[
-      {q:`Critically, what is the primary trade-off in advanced {t} systems?`,opts:['Accuracy vs. computational cost','Speed vs. colour','Size vs. weight','Cost vs. colour'],c:0},
-      {q:`Which theoretical limitation most constrains current {t} research?`,opts:['Interpretability and generalisation','Lack of interest','Excess of funding','Too many researchers'],c:0},
-      {q:`How should ethical considerations be prioritised in {t} deployment?`,opts:['Context-dependent, with stakeholder input','Always maximise profit','Ignore ethical concerns','Ethics apply only post-deployment'],c:0},
-      {q:`What distinguishes state-of-the-art {t} from previous generations?`,opts:['Foundation models with transfer learning','Rule-based lookup tables','Manual feature engineering','Linear regression only'],c:0},
-      {q:`Which evaluation metric is most appropriate for assessing {t} under distribution shift?`,opts:['Out-of-distribution robustness','In-sample training accuracy','Model file size','Number of parameters'],c:0},
-    ],
-  };
-  const pool=bank[diff];
-  return Array.from({length:count},(_,i)=>{
-    const tmpl=pool[i%pool.length];
-    return{
-      question:tmpl.q.replace(/\{t\}/g,topic),
-      options:tmpl.opts,
-      correct:tmpl.c,
-      topic:subs[i%subs.length],
-    };
+$('pdfBtn').addEventListener('click',generatePDF);
+
+function generatePDF(){
+  if(!window.jspdf){alert('PDF library not loaded. Please check your internet connection.');return}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  const H=doc.internal.pageSize.getHeight();
+  const margin=18;
+  let y=0;
+
+  const qs=S.questions,tot=qs.length;
+  let correct=0,wrong=0,skipped=0;
+  qs.forEach((q,i)=>{
+    const a=S.answers[i];
+    if(a===undefined)skipped++;
+    else if(a===q.correct)correct++;
+    else wrong++;
   });
+  const pct=Math.round((correct/tot)*100);
+
+  const totalTracked=Object.values(S.timePerQ).reduce((a,b)=>a+b,0);
+  const avgTime=totalTracked>0?totalTracked/tot:S.timerSec/tot||1;
+  const labels=['A','B','C','D'];
+
+  const tier=
+    pct>=90?{name:'Elite',       color:[16,185,129]}:
+    pct>=75?{name:'Advanced',    color:[99,102,241]}:
+    pct>=60?{name:'Proficient',  color:[245,158,11]}:
+    pct>=40?{name:'Developing',  color:[249,115,22]}:
+             {name:'Needs Practice',color:[239,68,68]};
+
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  /* ── Cover header ── */
+  doc.setFillColor(99,102,241);
+  doc.rect(0,0,W,52,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(22);doc.setFont('helvetica','bold');
+  doc.text('Upskill Pulse',W/2,18,{align:'center'});
+  doc.setFontSize(11);doc.setFont('helvetica','normal');
+  doc.text('Performance Report',W/2,27,{align:'center'});
+  doc.setFontSize(9);
+  doc.text(dateStr,W/2,36,{align:'center'});
+  doc.text(S.userName,W/2,44,{align:'center'});
+
+  y=62;
+
+  /* ── Score box ── */
+  doc.setFillColor(245,247,255);
+  doc.rect(margin,y,W-margin*2,48,'F');
+  doc.setTextColor(...tier.color);
+  doc.setFontSize(40);doc.setFont('helvetica','bold');
+  doc.text(pct+'%',W/2,y+22,{align:'center'});
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.setTextColor(100,116,139);
+  doc.text('Overall Score',W/2,y+30,{align:'center'});
+
+  /* stats row */
+  const sy=y+41;
+  doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.setTextColor(16,185,129);
+  doc.text(`✓ ${correct} Correct`,margin+5,sy);
+  doc.setTextColor(239,68,68);
+  doc.text(`✗ ${wrong} Wrong`,W/2-12,sy);
+  doc.setTextColor(245,158,11);
+  doc.text(`— ${skipped} Skipped`,W-52,sy);
+  y+=58;
+
+  /* ── Performance tier ── */
+  doc.setFontSize(12);doc.setFont('helvetica','normal');
+  doc.setTextColor(0,0,0);
+  doc.text('Performance Tier: ',margin,y);
+  doc.setTextColor(...tier.color);
+  doc.setFont('helvetica','bold');
+  doc.text(tier.name,margin+42,y);
+
+  y+=8;
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(100,116,139);
+  doc.text(`Topics: ${S.topics.join(', ')}   |   Difficulty: ${S.diff}   |   Total time: ${fmtTime(S.timerSec)}`,margin,y);
+  doc.text(`Avg time per question: ${Math.round(avgTime)}s   |   Questions: ${tot}`,margin,y+6);
+  y+=18;
+
+  /* ── Section: Per-question analysis ── */
+  doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);
+  doc.text('Per-Question Analysis',margin,y);
+  y+=8;
+
+  qs.forEach((q,i)=>{
+    if(y>H-40){doc.addPage();y=18;}
+    const a=S.answers[i];
+    const skip=a===undefined,ok=!skip&&a===q.correct;
+    const qTime=S.timePerQ[i]||0;
+
+    let timeFeedback='';
+    if(qTime>0){
+      if(qTime<avgTime*0.5&&ok)timeFeedback='Quick & accurate';
+      else if(qTime<avgTime*0.5&&!ok&&!skip)timeFeedback='Rushed — spend more time';
+      else if(qTime>avgTime*2&&ok)timeFeedback='Careful thought — correct!';
+      else if(qTime>avgTime*2&&!ok&&!skip)timeFeedback='Needs deeper study';
+      else if(ok)timeFeedback='Good pace';
+      else if(skip)timeFeedback='Skipped';
+      else timeFeedback='Review this topic';
+    }
+
+    /* row bg */
+    const bgColor=ok?[240,255,248]:skip?[248,250,252]:[255,242,242];
+    doc.setFillColor(...bgColor);
+    doc.rect(margin,y-4,W-margin*2,24,'F');
+
+    /* status indicator */
+    const stColor=ok?[16,185,129]:skip?[100,116,139]:[239,68,68];
+    doc.setFillColor(...stColor);
+    doc.circle(margin+5,y+5,3,'F');
+
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);
+    const qLabel=`Q${i+1}. `;
+    doc.text(qLabel,margin+11,y+2);
+    const qLabelW=doc.getTextWidth(qLabel);
+
+    doc.setFont('helvetica','normal');
+    const qLines=doc.splitTextToSize(q.question,W-margin*2-11-qLabelW-2);
+    doc.text(qLines[0],margin+11+qLabelW,y+2);
+
+    /* answer line */
+    doc.setFontSize(8);doc.setTextColor(100,116,139);
+    const ansText=skip?'Skipped':ok
+      ?`Your answer: ${labels[a]}. ${q.options[a]}`
+      :`Your: ${labels[a]}. ${q.options[a]}  →  Correct: ${labels[q.correct]}. ${q.options[q.correct]}`;
+    const ansLines=doc.splitTextToSize(ansText,W-margin*2-11);
+    doc.text(ansLines[0],margin+11,y+9);
+
+    /* time line */
+    doc.setTextColor(...stColor);
+    doc.text(`${qTime>0?qTime+'s':'—'}  ${timeFeedback}`,margin+11,y+16);
+
+    y+=28;
+  });
+
+  /* ── Competitive Evaluation ── */
+  if(y>H-80){doc.addPage();y=18;}
+  y+=4;
+  doc.setFillColor(240,242,255);
+  doc.rect(margin,y-4,W-margin*2,4,'F');
+  y+=8;
+
+  doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);
+  doc.text('Competitive Evaluation',margin,y);
+  y+=10;
+
+  const minutes=S.timerSec/60||1;
+  const effScore=Math.round((correct/minutes)*10)/10;
+
+  const slowWrong=[],rushedWrong=[];
+  qs.forEach((q,i)=>{
+    const a=S.answers[i],qTime=S.timePerQ[i]||0;
+    if(a!==undefined&&a!==q.correct){
+      if(qTime>avgTime*1.5)slowWrong.push(i+1);
+      if(qTime<avgTime*0.5&&qTime>0)rushedWrong.push(i+1);
+    }
+  });
+
+  const evalLines=[
+    {label:'Score',  val:`${pct}% (${correct}/${tot} correct)`},
+    {label:'Tier',   val:tier.name, color:tier.color},
+    {label:'Efficiency',val:`${effScore} correct answers / minute`},
+    {label:'Pacing', val:rushedWrong.length>0?`Rushed on Q${rushedWrong.join(', Q')} — slow down`:'No rushed-and-wrong answers — great pacing!'},
+    {label:'Struggles',val:slowWrong.length>0?`Spent long & still wrong on Q${slowWrong.join(', Q')} — needs deeper study`:'No slow-and-wrong answers — confident where it counts!'},
+  ];
+
+  doc.setFontSize(10);
+  evalLines.forEach(line=>{
+    if(y>H-20){doc.addPage();y=18;}
+    doc.setFont('helvetica','bold');doc.setTextColor(60,60,60);
+    doc.text(line.label+':',margin,y);
+    doc.setFont('helvetica','normal');
+    doc.setTextColor(...(line.color||[0,0,0]));
+    doc.text(line.val,margin+34,y);
+    y+=8;
+  });
+
+  y+=4;
+  if(y>H-30){doc.addPage();y=18;}
+  doc.setFont('helvetica','bold');doc.setTextColor(0,0,0);
+  doc.text('Recommendation:',margin,y);
+  y+=7;
+  doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+  const rec=
+    pct>=90?'Excellent! You have mastered this material. Challenge yourself with harder topics.':
+    pct>=75?'Strong performance. Focus on the weak topics flagged above to reach excellence.':
+    pct>=60?'Good foundation. Spend more time on flagged topics — re-read the relevant sections.':
+    pct>=40?'Keep practicing. Revisit study material for each missed question before retaking.':
+    'Start from the basics. Re-read all material carefully and retake the quiz.';
+  const recLines=doc.splitTextToSize(rec,W-margin*2);
+  doc.text(recLines,margin,y);
+  y+=recLines.length*6+8;
+
+  /* ── Footer ── */
+  const footerY=H-10;
+  doc.setFontSize(7);doc.setTextColor(150,150,150);
+  doc.text(`Generated by Upskill Pulse  |  ${now.toLocaleString()}  |  ${S.userName}`,W/2,footerY,{align:'center'});
+
+  const safeFilename=S.userName.replace(/[^a-z0-9]/gi,'-').toLowerCase()||'user';
+  doc.save(`upskill-pulse-${safeFilename}-report.pdf`);
 }
 </script>
 </body>
