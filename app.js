@@ -170,28 +170,24 @@ async function runLoadingAnimation() {
 // ══════════════════════════════════════════
 async function generateQuiz() {
   try {
-    /*
-      [API] — Send to backend:
-        POST /api/generate-quiz
-        FormData: { topic, difficulty, questionCount, files[] }
-      Expect back:
-        { questions: [ { question, options: [], correct: 0, topic } ] }
+    const formData = new FormData();
+    formData.append('topic', state.topic);
+    formData.append('difficulty', state.difficulty);
+    formData.append('questionCount', state.questionCount);
+    state.files.forEach(f => formData.append('files', f));
 
-      const formData = new FormData();
-      formData.append('topic', state.topic);
-      formData.append('difficulty', state.difficulty);
-      formData.append('questionCount', state.questionCount);
-      state.files.forEach(f => formData.append('files', f));
+    const res = await fetch('http://localhost:5000/api/generate-quiz', {
+      method: 'POST',
+      body: formData,
+    });
 
-      const res  = await fetch('/api/generate-quiz', { method: 'POST', body: formData });
-      const data = await res.json();
-      state.questions = data.questions;
-    */
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `Server error ${res.status}`);
+    }
 
-    // ── MOCK DATA (remove when backend is ready) ──
-    await delay(600);
-    state.questions = generateMockQuestions(state.topic, state.difficulty, state.questionCount);
-    // ──────────────────────────────────────────────
+    const data = await res.json();
+    state.questions = data.questions;
 
     $('loading-status').textContent = 'Quiz ready!';
     $('ls4').classList.add('done');
@@ -200,7 +196,7 @@ async function generateQuiz() {
     startQuiz();
   } catch (err) {
     console.error(err);
-    $('loading-status').textContent = 'Something went wrong. Please try again.';
+    $('loading-status').textContent = err.message || 'Something went wrong. Please try again.';
   }
 }
 

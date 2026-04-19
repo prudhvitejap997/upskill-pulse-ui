@@ -1138,29 +1138,34 @@ async function runLoader(){
   }
 }
 
-/* ─── [API] Replace mock with real backend call ─── */
 async function fetchQuiz(){
   try{
-    /*
-      const fd=new FormData();
-      fd.append('topic',S.topic);
-      fd.append('difficulty',S.diff);
-      fd.append('count',S.qCount);
-      S.files.forEach(f=>fd.append('files',f));
-      const res=await fetch('/api/generate-quiz',{method:'POST',body:fd});
-      const data=await res.json();
-      S.questions=data.questions;
-    */
-    await wait(500);
-    S.questions=mockQuestions(S.topic,S.diff,S.qCount);
+    if(!S.files.length){throw new Error('Please upload at least one file before generating a quiz.')}
+    const fd=new FormData();
+    fd.append('topic',S.topic);
+    fd.append('difficulty',S.diff);
+    fd.append('questionCount',S.qCount);
+    S.files.forEach(f=>fd.append('files',f));
+    const res=await fetch('http://localhost:3004/api/generate-quiz',{method:'POST',body:fd});
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error||`Server error ${res.status}`)}
+    const data=await res.json();
+    S.questions=data.questions;
 
-    // mark done
     for(let i=0;i<4;i++){$(`ls${i}`).classList.remove('active');$(`ls${i}`).classList.add('done')}
     await wait(350);
     launchQuiz();
   }catch(e){
-    $('loadSub').textContent='Error generating quiz. Please try again.';
     console.error(e);
+    $('loadSub').textContent=e.message||'Error generating quiz. Please try again.';
+    const backBtn=document.createElement('button');
+    backBtn.textContent='← Back to Setup';
+    backBtn.className='btn-act secondary';
+    backBtn.style.marginTop='1rem';
+    backBtn.addEventListener('click',()=>{
+      for(let i=0;i<4;i++){const el=$(`ls${i}`);el.classList.remove('active','done')}
+      showScreen('s-setup');
+    });
+    $('loadSub').after(backBtn);
   }
 }
 
