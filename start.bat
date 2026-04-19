@@ -5,8 +5,8 @@ echo   Upskill Pulse - Local Server
 echo  ==============================
 echo.
 
-if "%GEMINI_API_KEY%"=="" (
-    set /p GEMINI_API_KEY=Paste your Gemini API key here:
+if "%GROQ_API_KEY%"=="" (
+    set /p GROQ_API_KEY=Paste your Groq API key (or press Enter to use offline mode):
     echo.
 )
 

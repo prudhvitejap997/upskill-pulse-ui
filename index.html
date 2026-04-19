@@ -10,7 +10,7 @@
    RESET & VARIABLES
 ============================================= */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
+:root,[data-theme="dark"]{
   --bg:#080b14;
   --bg2:#0d1120;
   --surface:#111827;
@@ -34,6 +34,29 @@
   --radius2:18px;
   --shadow:0 20px 60px rgba(0,0,0,.6);
   --shadow2:0 4px 24px rgba(99,102,241,.2);
+}
+[data-theme="light"]{
+  --bg:#f5f7fb;
+  --bg2:#eef2f9;
+  --surface:#ffffff;
+  --surface2:#f1f5fb;
+  --surface3:#e4ebf5;
+  --border:#dfe6f0;
+  --border2:#cfd9e8;
+  --accent:#6366f1;
+  --accent2:#4f46e5;
+  --accent3:#4338ca;
+  --green:#059669;
+  --green2:#10b981;
+  --red:#dc2626;
+  --red2:#ef4444;
+  --yellow:#d97706;
+  --yellow2:#f59e0b;
+  --text:#0f172a;
+  --text2:#475569;
+  --text3:#64748b;
+  --shadow:0 20px 60px rgba(15,23,42,.08);
+  --shadow2:0 4px 24px rgba(99,102,241,.15);
 }
 html{scroll-behavior:smooth}
 body{
@@ -846,6 +869,193 @@ input{font-family:inherit}
 .btn-act.pdf:hover{opacity:.9;transform:translateY(-1px)}
 
 /* =============================================
+   Q TYPE BADGE + TYPE BREAKDOWN
+============================================= */
+.q-type-badge{
+  display:inline-block;
+  padding:.2rem .6rem;
+  border-radius:99px;
+  font-size:.65rem;font-weight:700;
+  letter-spacing:.3px;text-transform:uppercase;
+  background:rgba(165,180,252,.12);
+  border:1px solid rgba(165,180,252,.3);
+  color:var(--accent3);
+  margin-left:.5rem;
+  vertical-align:middle;
+}
+.type-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:.6rem;
+}
+.type-item{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  padding:.8rem .9rem;
+}
+.type-item .ti-name{
+  font-size:.75rem;font-weight:700;
+  color:var(--text2);margin-bottom:.35rem;
+  text-transform:uppercase;letter-spacing:.3px;
+}
+.type-item .ti-stat{
+  display:flex;align-items:baseline;gap:.4rem;
+}
+.type-item .ti-score{font-size:1.2rem;font-weight:800;color:var(--text)}
+.type-item .ti-total{font-size:.8rem;color:var(--text3)}
+.type-item.good{border-left:3px solid var(--green2)}
+.type-item.mid{border-left:3px solid var(--yellow2)}
+.type-item.bad{border-left:3px solid var(--red2)}
+.type-bar{
+  height:4px;background:var(--border2);
+  border-radius:99px;margin-top:.5rem;overflow:hidden;
+}
+.type-bar-fill{
+  height:100%;border-radius:99px;
+  transition:width .8s ease;
+}
+
+/* =============================================
+   NAV LINKS
+============================================= */
+.nav-link{
+  background:none;border:none;cursor:pointer;
+  color:var(--text2);font-size:.82rem;font-weight:600;
+  padding:.4rem .8rem;border-radius:8px;
+  transition:all .15s;
+  display:none;
+}
+.nav-link.visible{display:inline-flex;align-items:center;gap:.35rem}
+.nav-link:hover{background:var(--surface2);color:var(--text)}
+.nav-link.active{background:var(--accent);color:#fff}
+.nav-links{display:flex;gap:.3rem;align-items:center;margin-right:.5rem}
+
+/* =============================================
+   DASHBOARD SCREEN
+============================================= */
+.dash-hero{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;margin-bottom:1.6rem;flex-wrap:wrap;
+}
+.dash-hero h1{
+  font-size:clamp(1.5rem,3vw,2.2rem);
+  font-weight:800;letter-spacing:-.5px;
+}
+.dash-hero h1 span{
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.dash-hero p{color:var(--text2);font-size:.9rem;margin-top:.3rem}
+.btn-new-quiz{
+  background:linear-gradient(135deg,var(--accent),#8b5cf6);
+  border:none;border-radius:var(--radius);
+  padding:.85rem 1.4rem;
+  color:#fff;font-size:.9rem;font-weight:700;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(99,102,241,.3);
+  transition:all .2s;
+  display:flex;align-items:center;gap:.5rem;
+}
+.btn-new-quiz:hover{opacity:.9;transform:translateY(-1px)}
+
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1rem;margin-bottom:1.6rem;
+}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius2);
+  padding:1.2rem;
+  display:flex;align-items:center;gap:.9rem;
+}
+.sc-icon{
+  width:44px;height:44px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;
+  flex-shrink:0;
+}
+.sc-icon.blue {background:rgba(99,102,241,.15);color:var(--accent2)}
+.sc-icon.green{background:rgba(52,211,153,.15);color:var(--green2)}
+.sc-icon.yellow{background:rgba(251,191,36,.15);color:var(--yellow2)}
+.sc-icon.purple{background:rgba(168,85,247,.15);color:#c084fc}
+.sc-info{flex:1;min-width:0}
+.sc-label{font-size:.72rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.sc-val{font-size:1.4rem;font-weight:800;color:var(--text);margin-top:.15rem}
+.sc-val .small{font-size:.85rem;color:var(--text3);font-weight:500}
+
+.dash-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.2rem;
+}
+.dash-full{grid-column:1/-1}
+
+.dash-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius2);
+  padding:1.4rem;
+}
+
+.topic-perf-list{display:flex;flex-direction:column;gap:.8rem}
+.tp-row{
+  display:flex;align-items:center;gap:.8rem;
+}
+.tp-name{
+  min-width:110px;font-size:.82rem;color:var(--text);font-weight:600;
+}
+.tp-bar{
+  flex:1;height:8px;
+  background:var(--border2);
+  border-radius:99px;overflow:hidden;
+}
+.tp-fill{
+  height:100%;
+  border-radius:99px;
+  transition:width .7s ease;
+}
+.tp-pct{font-size:.78rem;font-weight:700;min-width:44px;text-align:right}
+
+.session-list{display:flex;flex-direction:column;gap:.55rem;max-height:360px;overflow-y:auto}
+.ses-item{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:.8rem;align-items:center;
+  padding:.75rem .9rem;
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  transition:all .15s;
+}
+.ses-item:hover{border-color:var(--accent2);transform:translateX(2px)}
+.ses-score{
+  width:42px;height:42px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:800;
+  flex-shrink:0;
+}
+.ses-score.g{background:rgba(52,211,153,.15);color:var(--green2)}
+.ses-score.y{background:rgba(251,191,36,.15);color:var(--yellow2)}
+.ses-score.r{background:rgba(239,68,68,.15);color:var(--red2)}
+.ses-info{min-width:0}
+.ses-topics{font-size:.85rem;color:var(--text);font-weight:600;margin-bottom:.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ses-meta{font-size:.72rem;color:var(--text3)}
+.ses-arrow{font-size:1rem;color:var(--text3)}
+
+.empty-dash{
+  text-align:center;padding:2.2rem 1rem;
+  color:var(--text3);
+}
+.empty-dash .em{font-size:2.2rem;margin-bottom:.5rem}
+.empty-dash .t{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:.3rem}
+
+/* =============================================
    RESPONSIVE
 ============================================= */
 @media(max-width:700px){
@@ -858,6 +1068,8 @@ input{font-family:inherit}
   .navbar{padding:0 1rem}
   .page{padding:1.2rem .8rem}
   .name-card{padding:2rem 1.4rem}
+  .dash-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -870,6 +1082,11 @@ input{font-family:inherit}
     <span class="name">Upskill Pulse</span>
   </a>
   <div class="nav-right">
+    <div class="nav-links">
+      <button class="nav-link" id="navDashboard">🏠 Dashboard</button>
+      <button class="nav-link" id="navNewQuiz">✨ New Quiz</button>
+    </div>
+    <button class="nav-link visible" id="themeToggle" title="Toggle theme">🌙</button>
     <div class="nav-dot"></div>
     <span class="nav-user-name" id="navUserName"></span>
     <span id="navTagline">AI Skills Assessment</span>
@@ -899,13 +1116,48 @@ input{font-family:inherit}
 </div>
 
 <!-- ═══════════════════════════════════════
+     SCREEN 0.5 — DASHBOARD
+═══════════════════════════════════════ -->
+<div id="s-dashboard" class="screen">
+<div class="page">
+
+  <div class="dash-hero">
+    <div>
+      <h1>Welcome back, <span id="dashUserName">there</span>!</h1>
+      <p id="dashSub">Here's your learning progress at a glance.</p>
+    </div>
+    <button class="btn-new-quiz" id="dashNewQuizBtn">✨ Start New Quiz</button>
+  </div>
+
+  <div class="stats-row" id="dashStatsRow"></div>
+
+  <div class="dash-grid">
+    <div class="dash-card">
+      <div class="sec-head"><div class="sec-head-ico">📊</div> Topic Performance</div>
+      <div class="topic-perf-list" id="dashTopicList"></div>
+    </div>
+
+    <div class="dash-card">
+      <div class="sec-head"><div class="sec-head-ico">🕒</div> Recent Sessions</div>
+      <div class="session-list" id="dashSessionList"></div>
+    </div>
+
+    <div class="dash-card dash-full">
+      <div class="sec-head"><div class="sec-head-ico">🎯</div> Question Type Mastery</div>
+      <div class="type-grid" id="dashTypeGrid"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
      SCREEN 1 — SETUP
 ═══════════════════════════════════════ -->
 <div id="s-setup" class="screen">
 <div class="page">
 
   <div class="hero">
-    <div class="hero-badge">✦ Powered by Claude AI</div>
     <h1>Generate a <span>Technical Quiz</span><br>From Your Material</h1>
     <p>Upload your study files, pick a difficulty, and get precision developer questions tailored to your material.</p>
   </div>
@@ -1042,7 +1294,7 @@ input{font-family:inherit}
 
   <!-- Question Card -->
   <div class="q-card" id="qCard">
-    <div class="q-tag" id="qTag">Question 1</div>
+    <div class="q-tag" id="qTag">Question 1 <span class="q-type-badge" id="qTypeBadge"></span></div>
     <div class="q-text" id="qText">Loading…</div>
     <ul class="opts" id="optsList"></ul>
     <div class="q-nav">
@@ -1135,6 +1387,12 @@ input{font-family:inherit}
     <div style="font-size:.8rem;color:var(--text3);margin-top:.2rem">Total assessment duration</div>
   </div>
 
+  <!-- Question Type Breakdown -->
+  <div class="feedback-card results-full">
+    <div class="sec-head"><div class="sec-head-ico">🎯</div> Question Type Breakdown</div>
+    <div class="type-grid" id="typeBreakdown"></div>
+  </div>
+
   <!-- Answer Review -->
   <div class="review-card results-full">
     <div class="sec-head"><div class="sec-head-ico">🔍</div> Answer Review &amp; Time Analysis</div>
@@ -1164,6 +1422,27 @@ const S = {
   userName:'',timePerQ:{},qStartTime:0,
 };
 
+/* ─── LocalStorage keys ───────────── */
+const LS_THEME    = 'upskill_theme';
+const LS_USERNAME = 'upskill_username';
+const LS_SESSIONS = 'upskill_sessions';
+
+function loadAllSessions(){
+  try{return JSON.parse(localStorage.getItem(LS_SESSIONS)||'[]')}catch(_){return []}
+}
+function loadSessions(){
+  /* Return sessions only for the current user */
+  const all=loadAllSessions();
+  const name=(S.userName||'').toLowerCase();
+  if(!name) return [];
+  return all.filter(s=>(s.userName||'').toLowerCase()===name);
+}
+function saveSession(session){
+  const all=loadAllSessions();
+  all.unshift(session);
+  localStorage.setItem(LS_SESSIONS, JSON.stringify(all.slice(0,200)));
+}
+
 /* ─── Helpers ───────────────────────── */
 const $=id=>document.getElementById(id);
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -1182,8 +1461,47 @@ function fmtTime(sec){
 }
 
 /* ═══════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════ */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  $('themeToggle').textContent = theme==='light' ? '☀️' : '🌙';
+  localStorage.setItem(LS_THEME, theme);
+}
+applyTheme(localStorage.getItem(LS_THEME) || 'dark');
+$('themeToggle').addEventListener('click', ()=>{
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(cur==='dark' ? 'light' : 'dark');
+});
+
+/* ═══════════════════════════════════════
+   NAV LINKS
+═══════════════════════════════════════ */
+function showNavLinks(show){
+  $('navDashboard').classList.toggle('visible', show);
+  $('navNewQuiz').classList.toggle('visible', show);
+}
+function setActiveNav(which){
+  $('navDashboard').classList.toggle('active', which==='dashboard');
+  $('navNewQuiz').classList.toggle('active', which==='setup');
+}
+$('navDashboard').addEventListener('click', ()=>{
+  renderDashboard();
+  showScreen('s-dashboard');
+  setActiveNav('dashboard');
+});
+$('navNewQuiz').addEventListener('click', ()=>{
+  resetQuizState();
+  showScreen('s-setup');
+  setActiveNav('setup');
+});
+
+/* ═══════════════════════════════════════
    NAME SCREEN
 ═══════════════════════════════════════ */
+const savedName = localStorage.getItem(LS_USERNAME);
+if(savedName){ $('nameInput').value = savedName; }
+
 $('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('getStartedBtn').click()});
 $('getStartedBtn').addEventListener('click',()=>{
   const name=$('nameInput').value.trim();
@@ -1194,11 +1512,32 @@ $('getStartedBtn').addEventListener('click',()=>{
     return;
   }
   S.userName=name;
+  localStorage.setItem(LS_USERNAME, name);
   $('navUserName').textContent='👤 '+name;
   $('navUserName').style.display='inline';
   $('navTagline').style.display='none';
-  showScreen('s-setup');
+  showNavLinks(true);
+
+  /* Existing user → show dashboard; new user → go to setup */
+  if(loadSessions().length > 0){
+    renderDashboard();
+    showScreen('s-dashboard');
+    setActiveNav('dashboard');
+  } else {
+    showScreen('s-setup');
+    setActiveNav('setup');
+  }
 });
+
+function resetQuizState(){
+  S.files=[];S.topics=[];S.questions=[];S.answers={};S.cur=0;
+  S.timePerQ={};S.qStartTime=0;
+  stopTimer();
+  renderFiles();
+  $('topic1').value='';$('topic2').value='';
+  $('qCount').value=10;$('stepVal').textContent=10;$('cntDisplay').textContent=10;
+  ['ls0','ls1','ls2','ls3'].forEach(id=>{$(id).classList.remove('active','done')});
+}
 
 /* ═══════════════════════════════════════
    SETUP SCREEN
@@ -1328,7 +1667,7 @@ function renderQ(idx){
   const q=S.questions[idx],tot=S.questions.length;
   const labels=['A','B','C','D'];
 
-  $('qTag').textContent=`Question ${idx+1} of ${tot}`;
+  $('qTag').innerHTML=`Question ${idx+1} of ${tot} <span class="q-type-badge">${q.type||''}</span>`;
   $('qText').textContent=q.question;
   $('qTopicBadge').textContent=S.topics.length>1?S.topics.join(' · '):S.topics[0];
   const db=$('qDiffBadge');
@@ -1511,7 +1850,178 @@ function showResults(){
     div.querySelector('.rev-header').addEventListener('click',()=>div.classList.toggle('open'));
     rl.appendChild(div);
   });
+
+  /* Type breakdown */
+  const typeStats={};
+  qs.forEach((q,i)=>{
+    const a=S.answers[i];
+    const t=q.type||'Other';
+    if(!typeStats[t]) typeStats[t]={correct:0,total:0};
+    typeStats[t].total++;
+    if(a!==undefined && a===q.correct) typeStats[t].correct++;
+  });
+  const tb=$('typeBreakdown'); tb.innerHTML='';
+  Object.entries(typeStats).forEach(([type,s])=>{
+    const p=Math.round((s.correct/s.total)*100);
+    const cls=p>=70?'good':p>=40?'mid':'bad';
+    const fillColor=p>=70?'var(--green2)':p>=40?'var(--yellow2)':'var(--red2)';
+    const div=document.createElement('div');
+    div.className='type-item '+cls;
+    div.innerHTML=`
+      <div class="ti-name">${type}</div>
+      <div class="ti-stat">
+        <div class="ti-score">${s.correct}/${s.total}</div>
+        <div class="ti-total">(${p}%)</div>
+      </div>
+      <div class="type-bar"><div class="type-bar-fill" style="width:${p}%;background:${fillColor}"></div></div>`;
+    tb.appendChild(div);
+  });
+
+  /* Save session to localStorage */
+  saveSession({
+    id:        Date.now(),
+    date:      new Date().toISOString(),
+    userName:  S.userName,
+    topics:    S.topics.slice(),
+    difficulty:S.diff,
+    total:     tot,
+    correct:   correct,
+    wrong:     wrong,
+    skipped:   skipped,
+    pct:       pct,
+    timeSec:   S.timerSec,
+    typeStats: typeStats,
+    topicScores: (function(){
+      const ts={};
+      qs.forEach((q,i)=>{
+        const a=S.answers[i];
+        const t=q.topic||'Other';
+        if(!ts[t]) ts[t]={correct:0,total:0};
+        ts[t].total++;
+        if(a!==undefined && a===q.correct) ts[t].correct++;
+      });
+      return ts;
+    })(),
+  });
 }
+
+/* ═══════════════════════════════════════
+   DASHBOARD RENDERING
+═══════════════════════════════════════ */
+function renderDashboard(){
+  const sessions = loadSessions();
+  $('dashUserName').textContent = S.userName || 'there';
+
+  /* Stats row */
+  const totalSessions = sessions.length;
+  const avgScore = totalSessions ? Math.round(sessions.reduce((a,s)=>a+s.pct,0)/totalSessions) : 0;
+  const totalQs = sessions.reduce((a,s)=>a+s.total,0);
+  const totalTime = sessions.reduce((a,s)=>a+s.timeSec,0);
+
+  $('dashStatsRow').innerHTML = `
+    <div class="stat-card"><div class="sc-icon blue">📊</div><div class="sc-info"><div class="sc-label">Sessions</div><div class="sc-val">${totalSessions}</div></div></div>
+    <div class="stat-card"><div class="sc-icon green">⭐</div><div class="sc-info"><div class="sc-label">Avg Score</div><div class="sc-val">${avgScore}<span class="small">%</span></div></div></div>
+    <div class="stat-card"><div class="sc-icon yellow">❓</div><div class="sc-info"><div class="sc-label">Questions</div><div class="sc-val">${totalQs}</div></div></div>
+    <div class="stat-card"><div class="sc-icon purple">⏱</div><div class="sc-info"><div class="sc-label">Total Time</div><div class="sc-val">${fmtTime(totalTime)}</div></div></div>
+  `;
+
+  /* Dashboard sub text */
+  if(totalSessions===0){
+    $('dashSub').textContent = 'No sessions yet. Start your first quiz!';
+  } else {
+    $('dashSub').textContent = `You've completed ${totalSessions} session${totalSessions>1?'s':''} — keep it up!`;
+  }
+
+  /* Topic performance (aggregate across sessions) */
+  const topicAgg = {};
+  sessions.forEach(s => {
+    Object.entries(s.topicScores||{}).forEach(([t, v]) => {
+      if(!topicAgg[t]) topicAgg[t]={correct:0,total:0};
+      topicAgg[t].correct += v.correct;
+      topicAgg[t].total   += v.total;
+    });
+  });
+  const topicList = $('dashTopicList');
+  if(Object.keys(topicAgg).length===0){
+    topicList.innerHTML = '<div class="empty-dash"><div class="em">📚</div><div class="t">No topic data yet</div><div>Take a quiz to see your strengths.</div></div>';
+  } else {
+    topicList.innerHTML = '';
+    Object.entries(topicAgg)
+      .sort((a,b) => (b[1].correct/b[1].total) - (a[1].correct/a[1].total))
+      .forEach(([topic, v]) => {
+        const p = Math.round((v.correct/v.total)*100);
+        const color = p>=70?'var(--green2)':p>=40?'var(--yellow2)':'var(--red2)';
+        const row = document.createElement('div');
+        row.className = 'tp-row';
+        row.innerHTML = `
+          <div class="tp-name">${topic}</div>
+          <div class="tp-bar"><div class="tp-fill" style="width:${p}%;background:${color}"></div></div>
+          <div class="tp-pct" style="color:${color}">${p}%</div>`;
+        topicList.appendChild(row);
+      });
+  }
+
+  /* Recent sessions */
+  const sesList = $('dashSessionList');
+  if(sessions.length===0){
+    sesList.innerHTML = '<div class="empty-dash"><div class="em">🕒</div><div class="t">No sessions yet</div><div>Your recent quizzes will appear here.</div></div>';
+  } else {
+    sesList.innerHTML = '';
+    sessions.slice(0, 10).forEach(s => {
+      const cls = s.pct>=70?'g':s.pct>=40?'y':'r';
+      const date = new Date(s.date);
+      const when = date.toLocaleDateString('en-US', {month:'short',day:'numeric'}) + ' · ' + date.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+      const topics = (s.topics||[]).join(' · ') || 'Mixed';
+      const item = document.createElement('div');
+      item.className = 'ses-item';
+      item.innerHTML = `
+        <div class="ses-score ${cls}">${s.pct}%</div>
+        <div class="ses-info">
+          <div class="ses-topics">${topics}</div>
+          <div class="ses-meta">${s.correct}/${s.total} correct · ${s.difficulty} · ${fmtTime(s.timeSec)} · ${when}</div>
+        </div>
+        <div class="ses-arrow">›</div>`;
+      sesList.appendChild(item);
+    });
+  }
+
+  /* Question type mastery (aggregate) */
+  const typeAgg = {};
+  sessions.forEach(s => {
+    Object.entries(s.typeStats||{}).forEach(([t, v]) => {
+      if(!typeAgg[t]) typeAgg[t]={correct:0,total:0};
+      typeAgg[t].correct += v.correct;
+      typeAgg[t].total   += v.total;
+    });
+  });
+  const typeGrid = $('dashTypeGrid');
+  if(Object.keys(typeAgg).length===0){
+    typeGrid.innerHTML = '<div class="empty-dash dash-full"><div class="em">🎯</div><div class="t">No type data yet</div><div>Take a quiz to discover your strongest question types.</div></div>';
+  } else {
+    typeGrid.innerHTML = '';
+    Object.entries(typeAgg).forEach(([type, v]) => {
+      const p = Math.round((v.correct/v.total)*100);
+      const cls = p>=70?'good':p>=40?'mid':'bad';
+      const color = p>=70?'var(--green2)':p>=40?'var(--yellow2)':'var(--red2)';
+      const item = document.createElement('div');
+      item.className = 'type-item '+cls;
+      item.innerHTML = `
+        <div class="ti-name">${type}</div>
+        <div class="ti-stat">
+          <div class="ti-score">${v.correct}/${v.total}</div>
+          <div class="ti-total">(${p}%)</div>
+        </div>
+        <div class="type-bar"><div class="type-bar-fill" style="width:${p}%;background:${color}"></div></div>`;
+      typeGrid.appendChild(item);
+    });
+  }
+}
+
+$('dashNewQuizBtn').addEventListener('click', ()=>{
+  resetQuizState();
+  showScreen('s-setup');
+  setActiveNav('setup');
+});
 
 function grade(p){
   if(p>=90)return{em:'🏆',title:'Outstanding!',msg:'perfect execution. You know this inside out.'};
@@ -1526,14 +2036,10 @@ $('retakeBtn').addEventListener('click',()=>{
   launchQuiz();
 });
 $('newQuizBtn').addEventListener('click',()=>{
-  S.files=[];S.topics=[];S.questions=[];S.answers={};S.cur=0;
-  S.timePerQ={};S.qStartTime=0;
-  stopTimer();
-  renderFiles();
-  $('topic1').value='';$('topic2').value='';
-  $('qCount').value=10;$('stepVal').textContent=10;$('cntDisplay').textContent=10;
-  ['ls0','ls1','ls2','ls3'].forEach(id=>{$(id).classList.remove('active','done')});
-  showScreen('s-setup');
+  resetQuizState();
+  renderDashboard();
+  showScreen('s-dashboard');
+  setActiveNav('dashboard');
 });
 
 /* ═══════════════════════════════════════
