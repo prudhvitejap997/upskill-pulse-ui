@@ -1,5 +1,6 @@
 # Upskill Pulse
 
+contribution list : Prudhvi teja, Gayathri, Phanendra, Himesh
 > **AI-powered technical skills assessment for developers.** Upload study material, pick topics, and generate precision technical questions with real-time performance tracking and downloadable PDF reports.
 
 ![Status](https://img.shields.io/badge/status-live-brightgreen)
