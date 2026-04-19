@@ -165,8 +165,7 @@ async function runLoadingAnimation() {
 }
 
 // ══════════════════════════════════════════
-//  [API] QUIZ GENERATION
-//  Replace the mock below with your backend call.
+//  QUIZ GENERATION
 // ══════════════════════════════════════════
 async function generateQuiz() {
   try {
@@ -176,16 +175,8 @@ async function generateQuiz() {
     formData.append('questionCount', state.questionCount);
     state.files.forEach(f => formData.append('files', f));
 
-    const res = await fetch('http://localhost:5000/api/generate-quiz', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `Server error ${res.status}`);
-    }
-
+    const res = await fetch('/api/generate-quiz', { method: 'POST', body: formData });
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
     const data = await res.json();
     state.questions = data.questions;
 
@@ -196,7 +187,7 @@ async function generateQuiz() {
     startQuiz();
   } catch (err) {
     console.error(err);
-    $('loading-status').textContent = err.message || 'Something went wrong. Please try again.';
+    $('loading-status').textContent = 'Something went wrong. Please try again.';
   }
 }
 
